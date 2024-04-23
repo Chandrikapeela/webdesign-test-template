@@ -91,3 +91,22 @@ firstp {
     margin-right: 30px;
 }
 
+
+.filter-wrapper{
+    width: 100%;
+    max-width: 1200px;
+    display: flex;
+    justify-content: space-around;
+}
+
+.filterOption{
+    padding: 5px 10px;
+    border: 1px solid #000;
+    border-radius: 20px;
+    cursor: pointer;
+}
+
+.filter-active{
+    background-color: #000;
+    color: white;
+}

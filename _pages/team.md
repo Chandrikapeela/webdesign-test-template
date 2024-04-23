@@ -38,63 +38,94 @@ permalink: /test/
 {% assign sorted_members = '' | split: '' | concat: ap_members | concat: phd_members | concat: msr_members | concat: ra_members | concat: us_members | concat: int_members | concat: oth_members %}
 
 
-{% assign number_printed = 0 %}
-{% for member in sorted_members %}
-{% if member.display == 1 and member.alumni == 0 %}
 
-{% assign even_odd = number_printed | modulo: 2 %}
 
-{% if even_odd == 0 %}
-<div class="row">
-{% endif %}
+<div id="filter-wrapper" class="filter-wrapper">
 
-<div class="col-sm-6 clearfix">
-  <img src="{{ member.image }}" class="img-responsive" width="35%" style="float: left" />
-  <h4>{{ member.name }}</h4>
-  <i>{{ member.position }}, {{ member.affiliation }} <br>email: {{ member.email }}</i>
-  <ul style="overflow: hidden">
-
-  {% if member.bio1 != "" %}
-    <li> {{ member.bio1 }} </li>
-  {% endif %}
-  {% if member.bio2 != "" %}
-    <li> {{ member.bio2 }} </li>
-  {% endif %}
-  {% if member.bio3 != "" %}
-    <li> {{ member.bio3 }} </li>
-  {% endif %}
-  {% if member.bio4 != "" %}
-    <li> {{ member.bio4 }} </li>
-  {% endif %}
-
-  </ul>
 </div>
 
-{% assign number_printed = number_printed | plus: 1 %}
-
-{% if even_odd == 1 %}
-</div>
-{% endif %}
-{% endif %}
-{% endfor %}
-
-{% assign even_odd = number_printed | modulo: 2 %}
-{% if even_odd == 1 %}
-</div>
-{% endif %}
-
-## Alumni
-
-{% for member in sorted_members %}
-{% if member.display == 1 and member.alumni == 1 %}
-
-<div class="col-sm-12 clearfix">
-  <img src="{{ member.image }}" class="img-thumbnail" width="100px" style="float: left" />
-  <h4>{{ member.name }}</h4>
-  <i>{{ member.position }}, {{ member.affiliation }} ({{ member.year }}) <br>email: {{ member.email }}</i>
-  <h5>{{ member.alumni_current }}</h5>
+<div id="main-root" class="row">
 </div>
 
+<script>
+  var sortedMembers = [
+    {% for member in sorted_members %}
+      {
+        name: "{{ member.name }}",
+        position: "{{ member.position }}",
+        affiliation: "{{ member.affiliation }}",
+        alumuni : "{{ member.alumni }}",
+        currentAlumuni : "{{ member.alumni_current }}",
+        display: "{{ member.display }}",
+        year: "{{ member.year }}",
+        image: "{{ member.image }}",
+        email: "{{ member.email }}",
+        bio1: "{{ member.bio1 }}",
+        bio2: "{{ member.bio2 }}",
+        bio3: "{{ member.bio3 }}",
+        bio4: "{{ member.bio4 }}"
+      },
+    {% endfor %}
+  ];
 
-{% endif %}
-{% endfor %}
+  const mainRoot = document.getElementById('main-root');
+  const filterWrapper = document.getElementById('filter-wrapper');
+  const filterArray = ['all'];
+  const filterOptions = ['all'];
+  let filterOptionsInnerHtml = `<div class="filterOption">all</div>`;
+  let filterButtons;
+
+    function changeFilter(){
+    let innerHtmlString = '';
+    for(let i =0; i < sortedMembers.length; i++){
+      if(sortedMembers[i].display == 1 && (filterArray.includes(sortedMembers[i].position.toLowerCase().trim()) || filterArray.includes('all'))){
+        innerHtmlString +=  `<div class="col-sm-6 clearfix">
+        <img src="${sortedMembers[i].image}" class="img-responsive" width="35%" style="float: left" />
+        <h4>${sortedMembers[i].name}</h4>
+        <i>${sortedMembers[i].position}, ${sortedMembers[i].affiliation} <br>email: ${sortedMembers[i].email}</i>
+        <ul style="overflow: hidden">
+          <li> {{ member.bio1 }} </li>
+          <li> {{ member.bio2 }} </li>
+          <li> {{ member.bio3 }} </li>
+          <li> {{ member.bio4 }} </li>
+        </ul>
+      </div>`
+      }
+      
+    }
+    mainRoot.innerHTML = innerHtmlString;
+  }
+
+  sortedMembers.forEach(ele =>{
+    if(!filterOptions.includes(ele.position.toLowerCase().trim()) && ele.position != ""){
+          filterOptions.push(ele.position.toLowerCase().trim());
+          filterOptionsInnerHtml += `<div class="filterOption">${ele.position.toLowerCase().trim()}</div>`;
+    }
+  })
+
+  changeFilter();
+
+  setTimeout(() =>{
+  filterButtons = document.querySelectorAll('.filterOption');
+    filterButtons.forEach(btn =>{
+      if(btn.innerText == 'all'){
+        btn.classList.add('filter-active');
+      }
+    btn.addEventListener('click', () =>{
+      if(filterArray.includes(btn.innerText)){
+      filterArray.splice(filterArray.indexOf(btn.innerText),1);
+      btn.classList.remove('filter-active');
+      } else {
+        filterArray.push(btn.innerText);
+        btn.classList.add('filter-active');
+      }
+      changeFilter();
+    })
+  })
+  },1000)
+
+   
+
+  filterWrapper.innerHTML = filterOptionsInnerHtml;
+
+</script>
