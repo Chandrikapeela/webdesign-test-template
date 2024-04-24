@@ -37,7 +37,7 @@ permalink: /test/
 
 {% assign sorted_members = '' | split: '' | concat: ap_members | concat: phd_members | concat: msr_members | concat: ra_members | concat: us_members | concat: int_members | concat: oth_members %}
 
-
+<p>Note: At least one filter is required :-)</p>
 
 
 <div id="filter-wrapper" class="filter-wrapper">
@@ -84,10 +84,10 @@ permalink: /test/
         <h4>${sortedMembers[i].name}</h4>
         <i>${sortedMembers[i].position}, ${sortedMembers[i].affiliation} <br>email: ${sortedMembers[i].email}</i>
         <ul style="overflow: hidden">
-          <li> {{ member.bio1 }} </li>
-          <li> {{ member.bio2 }} </li>
-          <li> {{ member.bio3 }} </li>
-          <li> {{ member.bio4 }} </li>
+        ${sortedMembers[i].bio1 ? `<li>${sortedMembers[i].bio1} </li>`: ''}
+        ${sortedMembers[i].bio2 ? `<li>${sortedMembers[i].bio2} </li>`: ''}
+        ${sortedMembers[i].bio3 ? `<li>${sortedMembers[i].bio3} </li>`: ''}
+        ${sortedMembers[i].bio4 ? `<li>${sortedMembers[i].bio4} </li>`: ''}
         </ul>
       </div>`
       }
@@ -112,14 +112,16 @@ permalink: /test/
         btn.classList.add('filter-active');
       }
     btn.addEventListener('click', () =>{
-      if(filterArray.includes(btn.innerText)){
+        if(filterArray.includes(btn.innerText) && filterArray.length >= 2){
       filterArray.splice(filterArray.indexOf(btn.innerText),1);
       btn.classList.remove('filter-active');
       } else {
-        filterArray.push(btn.innerText);
+        if(!filterArray.includes(btn.innerText)){
+          filterArray.push(btn.innerText);
         btn.classList.add('filter-active');
+        }
       }
-      changeFilter();
+      changeFilter();  
     })
   })
   },1000)
